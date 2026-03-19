@@ -6,12 +6,14 @@ use App\Models\Employee;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Events\BeforeImport;
 use Maatwebsite\Excel\Events\AfterImport;
 use Illuminate\Support\Facades\Cache;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class EmployeesImport implements ToModel, WithHeadingRow, WithEvents
+class EmployeesImport implements ToModel, WithHeadingRow, WithEvents, WithBatchInserts, WithChunkReading
 {
     private $periodo;
     private $importId;
@@ -299,6 +301,16 @@ class EmployeesImport implements ToModel, WithHeadingRow, WithEvents
         $data['nomina_data'] = $extra;
 
         return new Employee($data);
+    }
+
+    public function batchSize(): int
+    {
+        return 100;
+    }
+
+    public function chunkSize(): int
+    {
+        return 100;
     }
 
     private function transformDate($value)

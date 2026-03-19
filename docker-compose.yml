@@ -10,6 +10,7 @@ services:
       TZ: America/Tijuana
     volumes:
       - .:/var/www
+      - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
     ports:
       - "5174:5173"
       - "8086:8080"
@@ -24,6 +25,8 @@ services:
     restart: unless-stopped
     ports:
       - "9290:80"
+    environment:
+      TZ: America/Tijuana
     volumes:
       - .:/var/www
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
@@ -37,6 +40,7 @@ services:
     container_name: empleados_db
     restart: unless-stopped
     environment:
+      TZ: America/Tijuana
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: sistemas
       MYSQL_USER: rishar
@@ -55,6 +59,7 @@ services:
     ports:
       - "8291:80"
     environment:
+      TZ: America/Tijuana
       PMA_HOST: db
       PMA_ARBITRARY: 1
     depends_on:

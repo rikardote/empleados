@@ -15,17 +15,18 @@
         </style>
     </head>
     <body class="bg-gray-50 dark:bg-[#0a0a0a] text-[#1b1b18] p-6 lg:p-8 min-h-screen">
+        <a href="{{ url('/') }}" class="fixed top-6 left-6 z-50 flex items-center justify-center w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-white shadow-xl transition-all hover:scale-110 group" title="Volver al Inicio">
+            <svg class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </a>
         <div class="max-w-7xl mx-auto">
             <div class="mb-8 flex justify-between items-start">
                 <div>
                     <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Reporte de Empleados por Concepto</h1>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Filtra empleados que tengan asignado un concepto de nómina específico en una quincena.</p>
                 </div>
-                <div class="flex gap-3">
-                    <a href="{{ route('employees.compare-periods') }}" class="px-4 py-2 bg-gray-800 text-white rounded-md shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors font-medium text-sm">
-                        Comparar Quincenas
-                    </a>
-                </div>
+
             </div>
 
             <div class="bg-white dark:bg-[#161615] rounded-lg shadow-sm p-6 mb-8 border border-gray-200 dark:border-[#3E3E3A]">

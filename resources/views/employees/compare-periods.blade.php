@@ -17,6 +17,11 @@
         </style>
     </head>
     <body class="bg-gray-50 dark:bg-[#0a0a0a] text-[#1b1b18] p-6 lg:p-8 min-h-screen">
+        <a href="{{ url('/') }}" class="fixed top-6 left-6 z-50 flex items-center justify-center w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-white shadow-xl transition-all hover:scale-110 group" title="Volver al Inicio">
+            <svg class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </a>
         <div class="max-w-7xl mx-auto">
             <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
@@ -29,11 +34,7 @@
                         @endif
                     </p>
                 </div>
-                <div class="flex gap-2">
-                    <a href="{{ route('employees.concept-report') }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                        Volver a Reportes
-                    </a>
-                </div>
+
             </div>
 
             @if(isset($error))

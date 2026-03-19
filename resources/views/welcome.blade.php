@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sindicato | Dashboard de Gestión</title>
+    <title>Gestion de Plantilla | Dashboard de Gestión</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
@@ -75,13 +75,7 @@
     <div class="relative z-10 max-w-6xl mx-auto px-6 py-20 lg:py-32">
         <!-- Header -->
         <header class="text-center mb-24 max-w-3xl mx-auto">
-            <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/5 border border-white/10 text-blue-400 text-xs font-bold uppercase tracking-widest mb-8 floating">
-                <span class="relative flex h-2 w-2 mr-3">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                </span>
-                Panel Administrativo v2.0
-            </div>
+
             <h1 class="text-6xl lg:text-8xl font-black tracking-tight mb-8 leading-none">
                 Gestión de <br/>
                 <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500">
@@ -89,7 +83,7 @@
                 </span>
             </h1>
             <p class="text-xl text-gray-400 leading-relaxed font-light">
-                Plataforma avanzada para el análisis, comparación y gestión <br class="hidden md:block"/> de capital humano con tecnología de vanguardia.
+                Plataforma  para el análisis, comparación y gestión <br class="hidden md:block"/> de capital humano.
             </p>
         </header>
 

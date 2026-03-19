@@ -30,6 +30,8 @@ class EmployeeReportController extends Controller
         $previousEmployeeIds = [];
         $joinsCount = 0;
         $leavesCount = 0;
+        $employees = collect();
+        $leavesDetails = [];
 
         if ($selectedConcept && $selectedPeriod) {
             $employees = Employee::where('periodo', $selectedPeriod)
@@ -151,11 +153,19 @@ class EmployeeReportController extends Controller
             ]);
         }
 
-        $latestPeriod = $request->input('latest_period', $periods[0]);
-        $previousPeriod = $request->input('previous_period', $periods[1] ?? $periods[0]);
+        $latestPeriod = $request->input('latest_period');
+        $previousPeriod = $request->input('previous_period');
         $selectedPlazaType = $request->input('plaza_type');
+        $differences = [];
+        
+        $plazaTypes = Employee::distinct()
+            ->pluck('id_tipo_plaza')
+            ->filter()
+            ->values();
 
-        // Aseguramos que el periodo más reciente sea el "latest"
+        if (!$latestPeriod || !$previousPeriod) {
+            return view('employees.compare-periods', compact('latestPeriod', 'previousPeriod', 'differences', 'periods', 'plazaTypes', 'selectedPlazaType'));
+        }
         $latestIdx = $periods->search($latestPeriod);
         $previousIdx = $periods->search($previousPeriod);
 
@@ -176,12 +186,6 @@ class EmployeeReportController extends Controller
         $latestEmployeesRaw = $queryLatest->get();
         $previousEmployeesRaw = $queryPrevious->get();
 
-        // Obtener todos los tipos de plaza para el filtro (de ambos periodos para estar seguros)
-        $plazaTypes = Employee::whereIn('periodo', [$latestPeriod, $previousPeriod])
-            ->distinct()
-            ->pluck('id_tipo_plaza')
-            ->filter()
-            ->values();
 
         $exclude = [
             'id', 

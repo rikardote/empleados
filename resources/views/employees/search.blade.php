@@ -9,13 +9,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] dark:text-[#EDEDEC] min-h-screen">
+    <a href="{{ url('/') }}" class="fixed top-6 left-6 z-50 flex items-center justify-center w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-white shadow-xl transition-all hover:scale-110 group" title="Volver al Inicio">
+        <svg class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+    </a>
     <div class="container mx-auto px-4 py-12">
-        <div class="mb-8 flex items-center justify-between">
-            <a href="{{ url('/') }}" class="text-blue-600 hover:text-blue-700 font-medium flex items-center">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l-7-7m7 7h18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Volver al Inicio
-            </a>
-        </div>
 
         <div class="max-w-6xl mx-auto">
             <h1 class="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Consulta por Empleado</h1>
