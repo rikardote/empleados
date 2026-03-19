@@ -83,12 +83,18 @@ class EmployeeController extends Controller
         ini_set('memory_limit', '1G');
         
         $importId = $request->input('import_id');
+        $periodo = $request->input('periodo', 'N_A');
         
+        // Guardar el archivo para futura consulta/descarga
+        $file = $request->file('file');
+        $fileName = $periodo . '_' . now()->format('YmdHis') . '_' . $file->getClientOriginalName();
+        $file->storeAs('imports', $fileName, 'public');
+
         // Background imports are better, but for now we do it synchronously
         // and Laravel-Excel will trigger events.
-        Excel::import(new EmployeesImport($request->input('periodo'), $importId), $request->file('file'));
+        Excel::import(new EmployeesImport($periodo, $importId), $file);
 
-        return response()->json(['message' => 'Employees imported successfully'], 200);
+        return response()->json(['message' => 'Employees imported successfully', 'saved_file' => $fileName], 200);
     }
 
     /**
