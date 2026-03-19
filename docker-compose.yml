@@ -15,9 +15,8 @@ services:
       - "8086:8080"
     depends_on:
       - db
-      - redis
     networks:
-      - modern-net
+      - central_api_net
 
   web:
     image: nginx:alpine
@@ -31,7 +30,7 @@ services:
     depends_on:
       - app
     networks:
-      - modern-net
+      - central_api_net
 
   db:
     image: mysql:8.0
@@ -47,7 +46,7 @@ services:
     volumes:
       - modern_dbdata:/var/lib/mysql
     networks:
-      - modern-net
+      - central_api_net
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -61,31 +60,12 @@ services:
     depends_on:
       - db
     networks:
-      - modern-net
-
-  redis:
-    image: redis:alpine
-    container_name: empleados_redis
-    restart: unless-stopped
-    ports:
-      - "6381:6379"
-    networks:
-      - modern-net
-
-  nightwatch-agent:
-    image: laravelphp/nightwatch-agent:v1
-    container_name: empleados_nightwatch_agent
-    restart: unless-stopped
-    environment:
-      NIGHTWATCH_TOKEN: ${NIGHTWATCH_TOKEN}
-    networks:
-      - modern-net
+      - central_api_net
 
 networks:
-  modern-net:
+  central_api_net:
+    name: central_api_net
     driver: bridge
-    driver_opts:
-      com.docker.network.driver.mtu: 1420
 
 volumes:
   modern_dbdata:
