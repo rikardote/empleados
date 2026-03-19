@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Empleado - Historial</title>
+    <style>
+        body { font-family: sans-serif; padding: 2rem; background-color: #f4f4f9; color: #333; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+        .search-box { display: flex; gap: 1rem; margin-bottom: 2rem; align-items: flex-end; }
+        .form-group { flex: 1; }
+        label { display: block; margin-bottom: .5rem; font-weight: bold; }
+        input, select { width: 100%; padding: .5rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #007bff; color: white; padding: .6rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+        button:hover { background-color: #0056b3; }
+        .result-card { border: 1px solid #eee; padding: 1.5rem; border-radius: 8px; margin-top: 1rem; display: none; }
+        .result-header { border-bottom: 2px solid #007bff; padding-bottom: .5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+        .data-item { font-size: 0.9rem; }
+        .data-label { color: #666; font-size: 0.8rem; display: block; }
+        .data-value { font-weight: bold; }
+        .nomina-section { margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1rem; }
+        .nomina-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.5rem; font-size: 0.8rem; }
+        .no-results { color: #dc3545; display: none; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Consultar Historial de Empleado</h1>
+        
+        <div class="search-box">
+            <div class="form-group">
+                <label for="id_empleado">Número de Empleado:</label>
+                <input type="text" id="id_empleado" placeholder="Eje: 214245">
+            </div>
+            <div class="form-group">
+                <label for="periodo">Quincena (Periodo):</label>
+                <select id="periodo">
+                    <option value="">Cargando periodos...</option>
+                </select>
+            </div>
+            <button id="searchBtn">Buscar</button>
+        </div>
+
+        <div id="noResults" class="no-results">No se encontró información para los criterios seleccionados.</div>
+
+        <div id="resultCard" class="result-card">
+            <div class="result-header">
+                <h2 id="empName">Nombre del Empleado</h2>
+                <span id="empPeriod" style="background:#007bff; color:white; padding: 2px 8px; border-radius: 4px;">Periodo</span>
+            </div>
+            
+            <div class="data-grid" id="mainData">
+                <!-- Se llenará dinámicamente -->
+            </div>
+
+            <div class="nomina-section">
+                <h3>💰 Conceptos de Nómina / Datos Adicionales</h3>
+                <div class="nomina-grid" id="nominaData">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cargar periodos al inicio
+        async function loadPeriods() {
+            try {
+                const res = await fetch('/api/employees/periods');
+                const periods = await res.json();
+                const select = document.getElementById('periodo');
+                select.innerHTML = '<option value="">-- Seleccione --</option>';
+                periods.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p;
+                    opt.textContent = p;
+                    select.appendChild(opt);
+                });
+            } catch (e) {
+                console.error("Error cargando periodos", e);
+            }
+        }
+
+        document.getElementById('searchBtn').addEventListener('click', async () => {
+            const id = document.getElementById('id_empleado').value;
+            const p = document.getElementById('periodo').value;
+            
+            if (!id || !p) {
+                alert("Por favor ingresa el número de empleado y selecciona un periodo.");
+                return;
+            }
+
+            const resultCard = document.getElementById('resultCard');
+            const noResults = document.getElementById('noResults');
+            resultCard.style.display = 'none';
+            noResults.style.display = 'none';
+
+            try {
+                const res = await fetch(`/api/employees/search?id_empleado=${id}&periodo=${p}`);
+                const data = await res.json();
+
+                if (data.length > 0) {
+                    const emp = data[0];
+                    renderEmployee(emp);
+                    resultCard.style.display = 'block';
+                } else {
+                    noResults.style.display = 'block';
+                }
+            } catch (e) {
+                alert("Error al buscar: " + e.message);
+            }
+        });
+
+        function formatCurrency(value) {
+            if (value === null || value === undefined || value === '') return '';
+            if (isNaN(value)) return value;
+            return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value);
+        }
+
+        function renderEmployee(emp) {
+            document.getElementById('empName').textContent = `${emp.nombre} ${emp.apellido_1} ${emp.apellido_2 || ''}`;
+            document.getElementById('empPeriod').textContent = emp.periodo;
+
+            const mainData = document.getElementById('mainData');
+            mainData.innerHTML = '';
+            
+            // Campos principales (omitir id, timestamps, nomina_data, periodo)
+            const skip = ['id', 'created_at', 'updated_at', 'nomina_data', 'periodo', 'nombre', 'apellido_1', 'apellido_2'];
+            const currencyFields = ['sal_base', 'prev_social', 'compensacion', 'total_devengos', 'total_retenido_a', 'liquido'];
+            
+            for (const [key, value] of Object.entries(emp)) {
+                if (!skip.includes(key) && value !== null) {
+                    const item = document.createElement('div');
+                    item.className = 'data-item';
+                    const displayValue = currencyFields.includes(key) ? formatCurrency(value) : value;
+                    item.innerHTML = `<span class="data-label">${key.replace(/_/g, ' ').toUpperCase()}</span><span class="data-value">${displayValue}</span>`;
+                    mainData.appendChild(item);
+                }
+            }
+
+            const nominaData = document.getElementById('nominaData');
+            nominaData.innerHTML = '';
+            if (emp.nomina_data) {
+                for (const [key, value] of Object.entries(emp.nomina_data)) {
+                    if (value !== null && value != 0) {
+                        const item = document.createElement('div');
+                        item.className = 'data-item';
+                        const displayValue = isNaN(value) ? value : formatCurrency(value);
+                        item.innerHTML = `<span class="data-label">${key.replace(/_/g, ' ')}</span><span class="data-value">${displayValue}</span>`;
+                        nominaData.appendChild(item);
+                    }
+                }
+            }
+        }
+
+        loadPeriods();
+    </script>
+</body>
+</html>

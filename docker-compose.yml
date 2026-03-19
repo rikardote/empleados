@@ -1,0 +1,91 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: empleados_app
+    restart: unless-stopped
+    working_dir: /var/www
+    environment:
+      TZ: America/Tijuana
+    volumes:
+      - .:/var/www
+    ports:
+      - "5174:5173"
+      - "8086:8080"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - modern-net
+
+  web:
+    image: nginx:alpine
+    container_name: empleados_web
+    restart: unless-stopped
+    ports:
+      - "9290:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - modern-net
+
+  db:
+    image: mysql:8.0
+    container_name: empleados_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sistemas
+      MYSQL_USER: rishar
+      MYSQL_PASSWORD: secretpassword
+    ports:
+      - "3310:3306"
+    volumes:
+      - modern_dbdata:/var/lib/mysql
+    networks:
+      - modern-net
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: empleados_pma
+    restart: unless-stopped
+    ports:
+      - "8291:80"
+    environment:
+      PMA_HOST: db
+      PMA_ARBITRARY: 1
+    depends_on:
+      - db
+    networks:
+      - modern-net
+
+  redis:
+    image: redis:alpine
+    container_name: empleados_redis
+    restart: unless-stopped
+    ports:
+      - "6381:6379"
+    networks:
+      - modern-net
+
+  nightwatch-agent:
+    image: laravelphp/nightwatch-agent:v1
+    container_name: empleados_nightwatch_agent
+    restart: unless-stopped
+    environment:
+      NIGHTWATCH_TOKEN: ${NIGHTWATCH_TOKEN}
+    networks:
+      - modern-net
+
+networks:
+  modern-net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1420
+
+volumes:
+  modern_dbdata:
