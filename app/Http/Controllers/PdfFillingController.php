@@ -206,6 +206,28 @@ class PdfFillingController extends Controller
                 // Servicio
                 if ($formRecord->servicio) { $pdf->SetXY(50, 105); $pdf->Write(0, $formRecord->servicio); }
                 if ($formRecord->servicio_denominacion) { $pdf->SetXY(80, 105); $pdf->Write(0, mb_strtoupper($formRecord->servicio_denominacion)); }
+
+                // --- TURNO Y JORNADA (Filas 110, 115 estimada) ---
+                if ($formRecord->codigo_turno) { $pdf->SetXY(50, 111); $pdf->Write(0, $formRecord->codigo_turno); }
+                if ($formRecord->codigo_turno_descripcion) { $pdf->SetXY(80, 111); $pdf->Write(0, mb_strtoupper($formRecord->codigo_turno_descripcion)); }
+                
+                if ($formRecord->jornada) { $pdf->SetXY(50, 117); $pdf->Write(0, mb_strtoupper($formRecord->jornada)); }
+
+                // --- HORARIOS (Fila 123 estimada) ---
+                // Se asume que van en una línea: Codigo, E1, S1, E2, S2
+                if ($formRecord->horario_codigo) { $pdf->SetXY(30, 123); $pdf->Write(0, $formRecord->horario_codigo); }
+                if ($formRecord->horario_entrada1) { $pdf->SetXY(60, 123); $pdf->Write(0, $formRecord->horario_entrada1); }
+                if ($formRecord->horario_salida1) { $pdf->SetXY(80, 123); $pdf->Write(0, $formRecord->horario_salida1); }
+                if ($formRecord->horario_entrada2) { $pdf->SetXY(100, 123); $pdf->Write(0, $formRecord->horario_entrada2); }
+                if ($formRecord->horario_salida2) { $pdf->SetXY(120, 123); $pdf->Write(0, $formRecord->horario_salida2); }
+
+                // Observaciones (Si es multilínea, habría que usar MultiCell, pero por ahora Write)
+                if ($formRecord->observaciones) { 
+                    $pdf->SetXY(30, 130); 
+                    $pdf->SetFontSize(7);
+                    $pdf->Write(4, mb_strtoupper($formRecord->observaciones)); 
+                    $pdf->SetFontSize(9);
+                }
             }
         }
 
