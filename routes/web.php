@@ -1,11 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EmployeeReportController;
+use App\Http\Controllers\PdfFillingController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/pdf/fill/{id?}', [PdfFillingController::class, 'showForm'])->name('pdf.fill');
+Route::post('/pdf/fill', [PdfFillingController::class, 'fill'])->name('pdf.process');
+Route::post('/pdf/update/{id}', [PdfFillingController::class, 'update'])->name('pdf.update');
+Route::delete('/pdf/delete/{id}', [PdfFillingController::class, 'destroy'])->name('pdf.destroy');
 
 Route::get('/employees/concept-report', [EmployeeReportController::class, 'conceptReport'])->name('employees.concept-report');
 Route::get('/employees/concept-report/export', [EmployeeReportController::class, 'exportExcel'])->name('employees.concept-report.export');

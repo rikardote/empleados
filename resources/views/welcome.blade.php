@@ -192,6 +192,35 @@
                     </div>
                 </div>
             </a>
+
+            <!-- Movimientos de Personal (PDF Filling) -->
+            <a href="{{ route('pdf.fill') }}" class="group">
+                <div class="glass-card glow-purple p-10 rounded-[2.5rem] h-full relative overflow-hidden">
+                    <style>
+                        .glow-purple:hover { box-shadow: 0 0 40px rgba(168, 85, 247, 0.15); }
+                    </style>
+                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl transition-all duration-500 group-hover:bg-purple-500/20"></div>
+
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="w-16 h-16 bg-purple-500/10 border border-purple-500/20 rounded-2xl flex items-center justify-center group-hover:bg-purple-500/20 transition-all duration-500">
+                            <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-tighter">Formatos</div>
+                    </div>
+
+                    <h2 class="text-3xl font-bold mb-4">Movimientos de Personal</h2>
+                    <p class="text-gray-400 leading-relaxed mb-10 text-lg">
+                        Sistema de llenado automatizado de formatos oficiales (FM1) con persistencia de datos y generación de PDF.
+                    </p>
+
+                    <div class="flex items-center text-purple-400 font-bold group-hover:gap-4 transition-all">
+                        <span>Llenar formato</span>
+                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </div>
+                </div>
+            </a>
         </div>
 
         <!-- Footer -->
