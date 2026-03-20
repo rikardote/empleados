@@ -147,7 +147,7 @@ class PdfFillingController extends Controller
                 $pdf->SetXY(32, 49);  $pdf->Write(0, mb_strtoupper($formRecord->escolaridad ?? ''));
                 $pdf->SetXY(95, 51); $pdf->Write(0, mb_strtoupper($formRecord->cedula ?? ''));
                 $pdf->SetXY(32, 57);  $pdf->Write(0, mb_strtoupper($formRecord->domicilio ?? ''));
-                $pdf->SetXY(40, 90);  $pdf->Write(0, mb_strtoupper($formRecord->hijos ?? ''));
+                //$pdf->SetXY(40, 90);  $pdf->Write(0, mb_strtoupper($formRecord->hijos ?? ''));
                 $pdf->SetXY(80, 43); $pdf->Write(0, mb_strtoupper($formRecord->nacionalidad ?? ''));
 
                 // Movimiento
@@ -170,9 +170,42 @@ class PdfFillingController extends Controller
 
                 // Datos de la Plaza (Placeholder Coords: Y=150+)
                 // El usuario debe definirlas
-                $y = 150;
-                if ($formRecord->codigo_puesto) { $pdf->SetXY(20, $y); $pdf->Write(0, $formRecord->codigo_puesto); }
-                if ($formRecord->denominacion_puesto) { $pdf->SetXY(60, $y); $pdf->Write(0, $formRecord->denominacion_puesto); }
+                if ($formRecord->codigo_puesto) {
+                    $pdf->SetXY(51, 72);
+                    $textoPuesto = $formRecord->codigo_puesto . " / " . ($formRecord->nivel_subnivel ?? '');
+                    $pdf->Write(0, $textoPuesto);
+                }
+                if ($formRecord->denominacion_puesto) {
+                    $pdf->SetFontSize(7); // Tamaño más pequeño
+                    $pdf->SetXY(112, 72); 
+                    $pdf->Write(0, mb_strtoupper($formRecord->denominacion_puesto));
+                    $pdf->SetFontSize(9); // Restaurar tamaño original
+                }
+
+                // Siguiente fila (Fila 78 - Estimada)
+                if ($formRecord->numero_plaza) { $pdf->SetXY(30, 77); $pdf->Write(0, $formRecord->numero_plaza); }
+                if ($formRecord->tipo_plaza) { $pdf->SetXY(182, 77); $pdf->Write(0, mb_strtoupper($formRecord->tipo_plaza)); }
+                
+                // Fila 84 - Ocupación y Estatus
+                if ($formRecord->ocupacion) { $pdf->SetXY(30, 82); $pdf->Write(0, mb_strtoupper($formRecord->ocupacion)); }
+                if ($formRecord->estatus_plaza) { $pdf->SetXY(75, 82); $pdf->Write(0, mb_strtoupper($formRecord->estatus_plaza)); }
+
+                // --- UBICACIÓN ADMINISTRATIVA (Filas 90, 96, 102, 108 estimada) ---
+                // Unidad Administrativa
+                if ($formRecord->unidad_administrativa) { $pdf->SetXY(50, 91); $pdf->Write(0, $formRecord->unidad_administrativa); }
+                if ($formRecord->unidad_administrativa_denominacion) { $pdf->SetXY(80, 91); $pdf->Write(0, mb_strtoupper($formRecord->unidad_administrativa_denominacion)); }
+
+                // Adscripción
+                if ($formRecord->adscripcion) { $pdf->SetXY(50, 96); $pdf->Write(0, $formRecord->adscripcion); }
+                if ($formRecord->adscripcion_denominacion) { $pdf->SetXY(80, 96); $pdf->Write(0, mb_strtoupper($formRecord->adscripcion_denominacion)); }
+
+                // Adscripción Física
+                if ($formRecord->adscripcion_fisica) { $pdf->SetXY(50, 101); $pdf->Write(0, $formRecord->adscripcion_fisica); }
+                if ($formRecord->adscripcion_fisica_denominacion) { $pdf->SetXY(80, 100); $pdf->Write(0, mb_strtoupper($formRecord->adscripcion_fisica_denominacion)); }
+
+                // Servicio
+                if ($formRecord->servicio) { $pdf->SetXY(50, 105); $pdf->Write(0, $formRecord->servicio); }
+                if ($formRecord->servicio_denominacion) { $pdf->SetXY(80, 105); $pdf->Write(0, mb_strtoupper($formRecord->servicio_denominacion)); }
             }
         }
 

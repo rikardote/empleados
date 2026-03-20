@@ -127,12 +127,12 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-1">Fecha Inicial</label>
-                                <input type="date" name="fecha_movimiento" value="{{ old('fecha_movimiento', $selectedForm->fecha_movimiento ?? '') }}"
+                                <input type="date" name="fecha_movimiento" value="{{ old('fecha_movimiento', optional($selectedForm)->fecha_movimiento?->format('Y-m-d')) }}"
                                     class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none transition-all">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-1">Fecha Final</label>
-                                <input type="date" name="fecha_final" value="{{ old('fecha_final', $selectedForm->fecha_final ?? '') }}"
+                                <input type="date" name="fecha_final" value="{{ old('fecha_final', optional($selectedForm)->fecha_final?->format('Y-m-d')) }}"
                                     class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none transition-all">
                             </div>
                         </div>
