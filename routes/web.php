@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PdfFillingController;
+use App\Http\Controllers\EmployeeReportController;
 
 Route::get('/', function () {
     return view('welcome');

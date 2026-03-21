@@ -118,10 +118,16 @@
                                 2. Tipo de Movimiento
                             </h2>
                         </div>
-                        <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-1">Tipo de Movimiento</label>
-                                <input type="text" name="tipo_movimiento" value="{{ old('tipo_movimiento', $selectedForm->tipo_movimiento ?? '') }}"
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Código</label>
+                                <input type="text" name="cod_tipo_movimiento" value="{{ old('cod_tipo_movimiento', $selectedForm->cod_tipo_movimiento ?? '') }}"
+                                    class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none transition-all"
+                                    placeholder="Ej: 01, 10, 20...">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Descripción del Movimiento</label>
+                                <input type="text" name="tipo_mov" value="{{ old('tipo_mov', $selectedForm->tipo_mov ?? '') }}"
                                     class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none transition-all"
                                     placeholder="Ej: Alta, Baja, Reingreso...">
                             </div>
@@ -305,6 +311,124 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Observaciones</label>
                                 <textarea name="observaciones" rows="3" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all resize-none">{{ old('observaciones', $selectedForm->observaciones ?? '') }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Sección 4: Antecedentes de Ocupación de la Plaza -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-slate-50 px-8 py-4 border-b border-slate-200">
+                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                4. Antecedentes de Ocupación de la Plaza
+                            </h2>
+                        </div>
+                        <div class="p-8 space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre del Anterior Trabajador</label>
+                                        <input type="text" name="nombre_ant" value="{{ old('nombre_ant', $selectedForm->nombre_ant ?? '') }}"
+                                            class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-semibold text-slate-700 mb-1">Núm. Empleado Ant.</label>
+                                            <input type="text" name="num_empleado_ant" value="{{ old('num_empleado_ant', $selectedForm->num_empleado_ant ?? '') }}"
+                                                class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-slate-700 mb-1">Cod. Movimiento</label>
+                                            <input type="text" name="cod_movi_ant" value="{{ old('cod_movi_ant', $selectedForm->cod_movi_ant ?? '') }}"
+                                                class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">Tipo de Movimiento Ant.</label>
+                                        <input type="text" name="tipo_mov_ant" value="{{ old('tipo_mov_ant', $selectedForm->tipo_mov_ant ?? '') }}"
+                                            class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-semibold text-slate-700 mb-1">Fecha Inicio</label>
+                                            <input type="date" name="fecha_inicio_ant" value="{{ old('fecha_inicio_ant', optional($selectedForm)->fecha_inicio_ant?->format('Y-m-d')) }}"
+                                                class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-slate-700 mb-1">Fecha Fin</label>
+                                            <input type="date" name="fecha_fin_ant" value="{{ old('fecha_fin_ant', optional($selectedForm)->fecha_fin_ant?->format('Y-m-d')) }}"
+                                                class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <hr class="border-slate-100">
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre del Trabajador que Ocupará la Plaza</label>
+                                    <input type="text" name="nombre_trab_ant" value="{{ old('nombre_trab_ant', $selectedForm->nombre_trab_ant ?? '') }}"
+                                        class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all">
+                                </div>
+                                <div class="grid grid-cols-3 gap-4">
+                                    @php
+                                        $antCheckboxFields = [
+                                            'turno_opcional_ant' => 'Turno Opc.',
+                                            'percepcion_adicional_ant' => 'Perc. Adic.',
+                                            'riesgos_prof_ant' => 'Riesgos Prof.'
+                                        ];
+                                    @endphp
+                                    @foreach($antCheckboxFields as $key => $label)
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">{{ $label }}</label>
+                                            <select name="{{ $key }}" class="w-full px-2 py-1.5 border border-slate-200 rounded-lg text-xs">
+                                                <option value="---" {{ old($key, $selectedForm->$key ?? '') == '---' ? 'selected' : '' }}>---</option>
+                                                <option value="X" {{ old($key, $selectedForm->$key ?? '') == 'X' ? 'selected' : '' }}>X</option>
+                                            </select>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección 5: Firmas y Cargos -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-slate-50 px-8 py-4 border-b border-slate-200">
+                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                5. Firmas y Cargos
+                            </h2>
+                        </div>
+                        <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Titular del Área</label>
+                                <input type="text" name="titular_area" value="{{ old('titular_area', $selectedForm->titular_area ?? '') }}"
+                                    placeholder="Nombre completo"
+                                    class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none transition-all mb-2">
+                                <input type="text" name="cargo_titular_area" value="{{ old('cargo_titular_area', $selectedForm->cargo_titular_area ?? '') }}"
+                                    placeholder="Cargo ostentado"
+                                    class="w-full px-4 py-1.5 border border-slate-100 bg-slate-50 rounded-lg focus:ring-2 focus:ring-rose-300 outline-none text-sm transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Responsable Admvo.</label>
+                                <input type="text" name="responsable_admvo" value="{{ old('responsable_admvo', $selectedForm->responsable_admvo ?? '') }}"
+                                    placeholder="Nombre completo"
+                                    class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none transition-all mb-2">
+                                <input type="text" name="cargo_responsable_admvo" value="{{ old('cargo_responsable_admvo', $selectedForm->cargo_responsable_admvo ?? '') }}"
+                                    placeholder="Cargo ostentado"
+                                    class="w-full px-4 py-1.5 border border-slate-100 bg-slate-50 rounded-lg focus:ring-2 focus:ring-rose-300 outline-none text-sm transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Titular del Centro</label>
+                                <input type="text" name="titular_centro" value="{{ old('titular_centro', $selectedForm->titular_centro ?? '') }}"
+                                    placeholder="Nombre completo"
+                                    class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none transition-all mb-2">
+                                <input type="text" name="cargo_titular_centro" value="{{ old('cargo_titular_centro', $selectedForm->cargo_titular_centro ?? '') }}"
+                                    placeholder="Cargo ostentado"
+                                    class="w-full px-4 py-1.5 border border-slate-100 bg-slate-50 rounded-lg focus:ring-2 focus:ring-rose-300 outline-none text-sm transition-all">
                             </div>
                         </div>
                     </div>

@@ -35,6 +35,15 @@ services:
     networks:
       - central_api_net
 
+  redis:
+    image: redis:alpine
+    container_name: empleados_redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    networks:
+      - central_api_net
+
   db:
     image: mysql:8.0
     container_name: empleados_db
