@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Fm1Form extends Model
 {
@@ -14,4 +15,9 @@ class Fm1Form extends Model
         'fecha_inicio_ant' => 'date',
         'fecha_fin_ant'    => 'date',
     ];
+
+    public function importBatch(): BelongsTo
+    {
+        return $this->belongsTo(Fm1ImportBatch::class, 'import_batch_id');
+    }
 }

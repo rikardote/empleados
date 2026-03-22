@@ -94,14 +94,14 @@ class Fm1PdfService
         $this->writeText($pdf, 75, 82, $form->estatus_plaza);
 
         // Ubicación
-        $this->writeText($pdf, 50, 91, $form->unidad_administrativa, null, 'L', false, false);
-        $this->writeText($pdf, 80, 91, $form->unidad_administrativa_denominacion);
-        $this->writeText($pdf, 50, 96, $form->adscripcion, null, 'L', false, false);
-        $this->writeText($pdf, 80, 96, $form->adscripcion_denominacion);
-        $this->writeText($pdf, 50, 101, $form->adscripcion_fisica, null, 'L', false, false);
-        $this->writeText($pdf, 80, 100, $form->adscripcion_fisica_denominacion);
-        $this->writeText($pdf, 50, 105, $form->servicio, null, 'L', false, false);
-        $this->writeText($pdf, 80, 105, $form->servicio_denominacion);
+        $this->writeText($pdf, 53.3, 89.8, $form->unidad_administrativa, null, 'L', false, false);
+        $this->writeText($pdf, 78.5, 90.5, $form->unidad_administrativa_denominacion);
+        $this->writeText($pdf, 51.4, 95.1, $form->adscripcion, null, 'L', false, false);
+        $this->writeText($pdf, 78.2, 95.4, $form->adscripcion_denominacion);
+        $this->writeText($pdf, 51.3, 99.9, $form->adscripcion_fisica, null, 'L', false, false);
+        $this->writeText($pdf, 78.5, 100.5, $form->adscripcion_fisica_denominacion);
+        $this->writeText($pdf, 51.0, 104.6, $form->servicio, null, 'L', false, false);
+        $this->writeText($pdf, 78.9, 104.8, $form->servicio_denominacion);
 
         // Jornada/Horarios
         $this->writeText($pdf, 22, 113, $form->codigo_turno, null, 'L', false, false);
@@ -114,7 +114,7 @@ class Fm1PdfService
         $this->writeText($pdf, 194, 113, $form->horario_salida2, null, 'L', false, false);
 
         if ($form->observaciones) {
-            $this->writeText($pdf, 30, 130, $form->observaciones, 7);
+            $this->writeText($pdf, 121.8, 125.0, $form->observaciones, 7);
         }
 
         // Indicadores (X o ---)
@@ -123,24 +123,25 @@ class Fm1PdfService
 
     private function fillIndicators(Fpdi $pdf, Fm1Form $form): void
     {
-        $indicators = [
-            'turno_opcional'              => [108, 131],
-            'percepcion_adicional'        => [108, 135],
-            'riesgos_profesionales'       => [108, 139],
-            'mando'                        => [68, 131],
-            'enlace_alta_responsabilidad' => [68, 135],
-            'enlace'                       => [68, 139],
-            'operativo'                    => [68, 143],
-            'rama_medica'                  => [68, 147],
-        ];
+        // Indicadores lado derecho
+        if (!empty($form->turno_opcional))
+            $this->writeText($pdf, 108, 131, in_array(strtoupper(trim($form->turno_opcional)), ['S','1','SI','X']) ? 'X' : '---', null, 'L', false, false); // turno_opcional
+        if (!empty($form->percepcion_adicional))
+            $this->writeText($pdf, 108, 135, in_array(strtoupper(trim($form->percepcion_adicional)), ['S','1','SI','X']) ? 'X' : '---', null, 'L', false, false); // percepcion_adicional
+        if (!empty($form->riesgos_profesionales))
+            $this->writeText($pdf, 108, 139, in_array(strtoupper(trim($form->riesgos_profesionales)), ['S','1','SI','X']) ? 'X' : '---', null, 'L', false, false); // riesgos_profesionales
 
-        foreach ($indicators as $field => $coords) {
-            $val = $form->$field;
-            if (!empty($val)) {
-                $isX = in_array(strtoupper(trim($val)), ['S', '1', 'SI', 'X']);
-                $this->writeText($pdf, $coords[0], $coords[1], $isX ? 'X' : '---', null, 'L', false, false);
-            }
-        }
+        // Indicadores lado izquierdo
+        if (!empty($form->mando))
+            $this->writeText($pdf, 68, 131, in_array(strtoupper(trim($form->mando)), ['S','1','SI','X']) ? 'X' : '---', null, 'L', false, false); // mando
+        if (!empty($form->enlace_alta_responsabilidad))
+            $this->writeText($pdf, 68, 135, in_array(strtoupper(trim($form->enlace_alta_responsabilidad)), ['S','1','SI','X']) ? 'X' : '---', null, 'L', false, false); // enlace_alta_responsabilidad
+        if (!empty($form->enlace))
+            $this->writeText($pdf, 68, 139, in_array(strtoupper(trim($form->enlace)), ['S','1','SI','X']) ? 'X' : '---', null, 'L', false, false); // enlace
+        if (!empty($form->operativo))
+            $this->writeText($pdf, 68, 143, in_array(strtoupper(trim($form->operativo)), ['S','1','SI','X']) ? 'X' : '---', null, 'L', false, false); // operativo
+        if (!empty($form->rama_medica))
+            $this->writeText($pdf, 68, 147, in_array(strtoupper(trim($form->rama_medica)), ['S','1','SI','X']) ? 'X' : '---', null, 'L', false, false); // rama_medica
     }
 
     private function fillOccupancyAndSignatures(Fpdi $pdf, Fm1Form $form): void
@@ -149,7 +150,7 @@ class Fm1PdfService
         $this->writeText($pdf, 30, 162, $form->nombre_ant);
         $this->writeText($pdf, 45, 167, $form->num_empleado_ant, null, 'L', false, false);
         $this->writeText($pdf, 42, 172, $form->cod_movi_ant, null, 'L', false, false);
-        $this->writeText($pdf, 85, 172, $form->tipo_mov_ant);
+        $this->writeText($pdf, 88.4, 171.7, $form->tipo_mov_ant);
 
         if ($form->fecha_inicio_ant) {
             $this->writeText($pdf, 139, 176, $form->fecha_inicio_ant->format('d'), null, 'L', false, false);
@@ -165,35 +166,27 @@ class Fm1PdfService
         $this->writeText($pdf, 45, 218, $form->nombre_trab_ant, null, 'C', true, true, 120, 4);
 
         // Indicadores Antecedentes
-        $antIndicators = [
-            'turno_opcional_ant'       => [90, 182],
-            'percepcion_adicional_ant' => [148, 182],
-            'riesgos_prof_ant'         => [200, 182],
-        ];
-        foreach ($antIndicators as $field => $coords) {
-            $val = $form->$field;
-            if (!empty($val)) {
-                $isX = in_array(strtoupper(trim($val)), ['S', '1', 'SI', 'X']);
-                $this->writeText($pdf, $coords[0], $coords[1], $isX ? 'X' : '---', null, 'L', false, false);
-            }
-        }
+        if (!empty($form->turno_opcional_ant))
+            $this->writeText($pdf, 90, 182, in_array(strtoupper(trim($form->turno_opcional_ant)), ['S','1','SI','X']) ? 'X' : '---', null, 'L', false, false); // turno_opcional_ant
+        if (!empty($form->percepcion_adicional_ant))
+            $this->writeText($pdf, 148, 182, in_array(strtoupper(trim($form->percepcion_adicional_ant)), ['S','1','SI','X']) ? 'X' : '---', null, 'L', false, false); // percepcion_adicional_ant
+        if (!empty($form->riesgos_prof_ant))
+            $this->writeText($pdf, 200, 182, in_array(strtoupper(trim($form->riesgos_prof_ant)), ['S','1','SI','X']) ? 'X' : '---', null, 'L', false, false); // riesgos_prof_ant
 
         // Firmas
         $pdf->SetAutoPageBreak(false);
-        $w = 65;
-        $y = 252.5;
 
         // Titular Área
-        $this->writeText($pdf, 7.5, $y, $form->titular_area, 9, 'C', true, true, $w, 4);
-        $this->writeText($pdf, 7.5, $pdf->GetY(), $form->cargo_titular_area, 6.5, 'C', true, true, $w, 3);
+        $this->writeText($pdf, 7.5, 253.5, $form->titular_area, 9, 'C', true, true, 65, 4); // titular_area
+        $this->writeText($pdf, 9.1, 257.2, $form->cargo_titular_area, 6.5, 'C', true, true, 65, 3); // cargo_titular_area
 
         // Responsable Admvo.
-        $this->writeText($pdf, 75, $y, $form->responsable_admvo, 9, 'C', true, true, $w, 4);
-        $this->writeText($pdf, 75, $pdf->GetY(), $form->cargo_responsable_admvo, 6.5, 'C', true, true, $w, 3);
+        $this->writeText($pdf, 75.0, 254.2, $form->responsable_admvo, 9, 'C', true, true, 65, 4); // responsable_admvo
+        $this->writeText($pdf, 75, 258.5, $form->cargo_responsable_admvo, 6.5, 'C', true, true, 65, 3); // cargo_responsable_admvo
 
         // Titular Centro
-        $this->writeText($pdf, 142.5, $y, $form->titular_centro, 9, 'C', true, true, $w, 4);
-        $this->writeText($pdf, 142.5, $pdf->GetY(), $form->cargo_titular_centro, 6.5, 'C', true, true, $w, 3);
+        $this->writeText($pdf, 142.5, 253.4, $form->titular_centro, 9, 'C', true, true, 65, 4); // titular_centro
+        $this->writeText($pdf, 142.5, 257.0, $form->cargo_titular_centro, 6.5, 'C', true, true, 65, 3); // cargo_titular_centro
 
         $pdf->SetAutoPageBreak(true, 20);
     }

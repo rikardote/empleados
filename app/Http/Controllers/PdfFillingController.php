@@ -27,6 +27,15 @@ class PdfFillingController extends Controller
     }
 
     /**
+     * Formulario visual: inputs superpuestos directamente sobre el PDF.
+     */
+    public function showVisualForm($id = null)
+    {
+        $selectedForm = $id ? Fm1Form::findOrFail($id) : null;
+        return view('pdf.fill-visual', compact('selectedForm'));
+    }
+
+    /**
      * Procesa los datos, los guarda en BD y genera el PDF resultante.
      */
     public function fill(Request $request)

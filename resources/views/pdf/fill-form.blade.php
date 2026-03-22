@@ -73,11 +73,17 @@
                 <h1 class="text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 tracking-tight mb-2 leading-tight">Movimientos de Personal</h1>
                 <p class="text-gray-400 font-light text-lg">Gestión y llenado de formatos FM1 <span class="mx-2 text-white/10">|</span> <span class="text-indigo-400/80 font-bold">Smart Generator</span></p>
             </div>
-            <a href="{{ route('pdf.fill') }}" class="group relative inline-flex items-center px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-sm font-bold text-gray-300 hover:text-white hover:border-indigo-500/50 transition-all duration-500 backdrop-blur-md overflow-hidden">
-                <span class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-indigo-600/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out"></span>
-                <svg class="w-5 h-5 mr-2 relative z-10 transition-transform group-hover:scale-110 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                <span class="relative z-10">Nuevo Registro</span>
-            </a>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('pdf.inspector') }}" class="group relative inline-flex items-center px-5 py-3 bg-white/5 border border-rose-500/20 rounded-2xl text-sm font-bold text-rose-400 hover:text-white hover:border-rose-500/60 hover:bg-rose-500/10 transition-all duration-300 backdrop-blur-md">
+                    <span class="mr-2 text-base">🎯</span>
+                    Inspector de Coordenadas
+                </a>
+                <a href="{{ route('pdf.fill') }}" class="group relative inline-flex items-center px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-sm font-bold text-gray-300 hover:text-white hover:border-indigo-500/50 transition-all duration-500 backdrop-blur-md overflow-hidden">
+                    <span class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-indigo-600/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out"></span>
+                    <svg class="w-5 h-5 mr-2 relative z-10 transition-transform group-hover:scale-110 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    <span class="relative z-10">Nuevo Registro</span>
+                </a>
+            </div>
         </div>
 
         @if(session('success'))

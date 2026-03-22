@@ -193,8 +193,8 @@
                 </div>
             </a>
 
-            <!-- Movimientos de Personal (PDF Filling) -->
-            <a href="{{ route('pdf.fill') }}" class="group">
+            <!-- Movimientos de Personal (Dual Filling Mode) -->
+            <div class="group">
                 <div class="glass-card glow-purple p-10 rounded-[2.5rem] h-full relative overflow-hidden">
                     <style>
                         .glow-purple:hover { box-shadow: 0 0 40px rgba(168, 85, 247, 0.15); }
@@ -207,21 +207,81 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
-                        <div class="text-xs font-bold text-gray-500 uppercase tracking-tighter">Formatos</div>
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-tighter">Formatos FM1</div>
                     </div>
 
                     <h2 class="text-3xl font-bold mb-4">Movimientos de Personal</h2>
-                    <p class="text-gray-400 leading-relaxed mb-10 text-lg">
-                        Sistema de llenado automatizado de formatos oficiales (FM1) con persistencia de datos y generación de PDF.
+                    <p class="text-gray-400 leading-relaxed mb-6 text-lg">
+                        Genera formatos oficiales FM1. Elige entre el llenado tradicional por pasos o el nuevo modo visual directo.
                     </p>
 
-                    <div class="flex items-center text-purple-400 font-bold group-hover:gap-4 transition-all">
-                        <span>Llenar formato</span>
+                    <div class="grid grid-cols-2 gap-4">
+                        <a href="{{ route('pdf.fill') }}" 
+                           class="flex flex-col items-center justify-center p-4 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all group/opt">
+                            <span class="text-sm font-bold text-gray-300">Modo Tradicional</span>
+                            <span class="text-[10px] text-gray-500 text-center mt-1">Llenado por pasos con historial</span>
+                        </a>
+                        <a href="{{ route('pdf.fill-visual') }}" 
+                           class="flex flex-col items-center justify-center p-4 rounded-3xl bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-all group/opt">
+                            <span class="text-sm font-bold text-purple-300">Modo Visual ✨</span>
+                            <span class="text-[10px] text-purple-400/60 text-center mt-1">Escribe directamente sobre el PDF</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FM1 desde Excel -->
+            <a href="{{ route('fm1.import.index') }}" class="group">
+                <div class="glass-card p-10 rounded-[2.5rem] h-full relative overflow-hidden" style="--glow: rgba(236,72,153,0.15);">
+                    <style>.glow-pink:hover { box-shadow: 0 0 40px rgba(236,72,153,0.15); }</style>
+                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-pink-500/10 rounded-full blur-3xl transition-all duration-500 group-hover:bg-pink-500/20"></div>
+
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="w-16 h-16 bg-pink-500/10 border border-pink-500/20 rounded-2xl flex items-center justify-center group-hover:bg-pink-500/20 transition-all duration-500">
+                            <svg class="w-8 h-8 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-tighter">Importación Masiva</div>
+                    </div>
+
+                    <h2 class="text-3xl font-bold mb-4">FM1 desde Excel</h2>
+                    <p class="text-gray-400 leading-relaxed mb-10 text-lg">
+                        Importa múltiples movimientos de personal desde un archivo Excel y descarga sus formatos FM1 en PDF, individual o todos juntos.
+                    </p>
+
+                    <div class="flex items-center text-pink-400 font-bold group-hover:gap-4 transition-all">
+                        <span>Importar movimientos</span>
+                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Inspector de Coordenadas PDF -->
+            <a href="{{ route('pdf.inspector') }}" class="group">
+                <div class="glass-card glow-rose p-10 rounded-[2.5rem] h-full relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-rose-500/10 rounded-full blur-3xl transition-all duration-500 group-hover:bg-rose-500/20"></div>
+
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="w-16 h-16 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center justify-center group-hover:bg-rose-500/20 transition-all duration-500">
+                            <span class="text-3xl">🎯</span>
+                        </div>
+                        <div class="text-xs font-bold text-rose-500/60 uppercase tracking-tighter">Dev Tool</div>
+                    </div>
+
+                    <h2 class="text-3xl font-bold mb-4">Inspector FM1</h2>
+                    <p class="text-gray-400 leading-relaxed mb-10 text-lg">
+                        Herramienta visual point &amp; click para ver y ajustar coordenadas del PDF sin tocar el código. Arrastra los campos directamente sobre el documento.
+                    </p>
+
+                    <div class="flex items-center text-rose-400 font-bold group-hover:gap-4 transition-all">
+                        <span>Abrir inspector</span>
                         <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </div>
                 </div>
             </a>
         </div>
+
 
         <!-- Footer -->
         <footer class="mt-32 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-gray-600">
