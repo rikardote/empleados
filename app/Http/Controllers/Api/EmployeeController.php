@@ -128,6 +128,10 @@ class EmployeeController extends Controller
             $query->where('periodo', $request->input('periodo'));
         }
 
+        if ($request->boolean('latest')) {
+            return response()->json($query->latest('id')->first());
+        }
+
         return response()->json($query->get());
     }
 
