@@ -6,6 +6,7 @@ use App\Models\Fm1Form;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 use Illuminate\Support\Collection;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
@@ -29,7 +30,7 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
  * titular_area, cargo_titular_area, responsable_admvo, cargo_responsable_admvo,
  * titular_centro, cargo_titular_centro
  */
-class Fm1Import implements ToCollection, WithHeadingRow, WithChunkReading
+class Fm1Import implements ToCollection, WithHeadingRow, WithChunkReading, WithCustomCsvSettings
 {
     private ?int $batchId;
     private int $importedCount = 0;
@@ -116,6 +117,13 @@ class Fm1Import implements ToCollection, WithHeadingRow, WithChunkReading
     public function chunkSize(): int
     {
         return 500;
+    }
+
+    public function getCsvSettings(): array
+    {
+        return [
+            'input_encoding' => 'Windows-1252'
+        ];
     }
 
     public function getImportedCount(): int

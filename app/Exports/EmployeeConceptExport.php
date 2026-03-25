@@ -47,7 +47,11 @@ class EmployeeConceptExport implements FromCollection, WithHeadings, WithMapping
                       ->where("nomina_data->{$this->concept}", '!=', 0);
             })
             ->get()
-            ->unique('id_empleado');
+            ->unique('id_empleado')
+            ->sortBy([
+                ['id_centro_pago', 'asc'],
+                ['id_empleado', 'asc'],
+            ]);
     }
 
     public function headings(): array

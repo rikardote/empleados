@@ -6,6 +6,7 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 use Maatwebsite\Excel\Events\BeforeImport;
 use Maatwebsite\Excel\Events\AfterImport;
 use Illuminate\Support\Collection;
@@ -24,7 +25,7 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
  *  5. transformDate() sin instancia OOP  → parsing mínimo via Carbon::parse.
  *  6. Columna extra precalculada 1 vez   → no se itera el array de llaves innecesariamente.
  */
-class EmployeesImport implements ToCollection, WithHeadingRow, WithEvents, WithChunkReading
+class EmployeesImport implements ToCollection, WithHeadingRow, WithEvents, WithChunkReading, WithCustomCsvSettings
 {
     private string|null $periodo;
     private string|null $importId;
@@ -199,6 +200,13 @@ class EmployeesImport implements ToCollection, WithHeadingRow, WithEvents, WithC
     public function chunkSize(): int
     {
         return 1000;
+    }
+
+    public function getCsvSettings(): array
+    {
+        return [
+            'input_encoding' => 'Windows-1252'
+        ];
     }
 
     /**

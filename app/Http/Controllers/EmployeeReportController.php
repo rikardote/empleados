@@ -40,7 +40,11 @@ class EmployeeReportController extends Controller
                           ->where("nomina_data->$selectedConcept", '!=', 0);
                 })
                 ->get()
-                ->unique('id_empleado');
+                ->unique('id_empleado')
+                ->sortBy([
+                    ['id_centro_pago', 'asc'],
+                    ['id_empleado', 'asc'],
+                ]);
 
             $currentEmployeeIds = $employees->pluck('id_empleado')->toArray();
 
@@ -382,6 +386,9 @@ class EmployeeReportController extends Controller
         try {
             // Leer solo las primeras 2 filas para detectar el periodo automáticamente
             $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file->getRealPath());
+            if ($reader instanceof \PhpOffice\PhpSpreadsheet\Reader\Csv) {
+                $reader->setInputEncoding('Windows-1252');
+            }
             $reader->setReadDataOnly(true);
             $reader->setReadFilter(new class implements \PhpOffice\PhpSpreadsheet\Reader\IReadFilter {
                 public function readCell($columnAddress, $row, $worksheetName = '') {

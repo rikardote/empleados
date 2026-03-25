@@ -127,7 +127,7 @@
                     <div class="employee-card bg-white dark:bg-[#161615] shadow-sm rounded-lg overflow-hidden border border-gray-200 dark:border-[#3E3E3A]" data-type="{{ $diff['type'] }}">
                         <div class="px-6 py-4 border-b border-gray-100 dark:border-[#3E3E3A] flex justify-between items-center bg-gray-50/50 dark:bg-[#0d0d0c]/50">
                             <div>
-                                <span class="text-xs font-mono text-gray-500 dark:text-gray-400 uppercase tracking-wider">Empleado #{{ $diff['id_empleado'] }} @if($diff['id_plaza_empleado']) (Plaza: {{ $diff['id_plaza_empleado'] }}) @endif</span>
+                                <span class="text-xs font-mono text-gray-500 dark:text-gray-400 uppercase tracking-wider">Empleado #<a href="{{ route('employees.search', ['id_empleado' => $diff['id_empleado']]) }}" class="text-blue-600 hover:underline cursor-pointer" title="Ver historial de este empleado">{{ $diff['id_empleado'] }}</a> @if($diff['id_plaza_empleado']) (Plaza: {{ $diff['id_plaza_empleado'] }}) @endif</span>
                                 <h3 class="text-base font-semibold text-gray-900 dark:text-white">{{ $diff['nombre_completo'] }}</h3>
                             </div>
                             <span class="px-2.5 py-0.5 rounded-full text-xs font-medium badge-{{ $diff['type'] }}">

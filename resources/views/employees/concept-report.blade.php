@@ -117,7 +117,11 @@
                                         $isNew = !empty($previousEmployeeIds) && !in_array($employee->id_empleado, $previousEmployeeIds);
                                     @endphp
                                     <tr data-is-new="{{ $isNew ? 'true' : 'false' }}" class="hover:bg-gray-50 dark:hover:bg-[#0d0d0c] transition-colors">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ $employee->id_empleado }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                            <a href="{{ route('employees.search', ['id_empleado' => $employee->id_empleado]) }}" class="text-blue-600 hover:underline cursor-pointer" title="Ver historial de este empleado">
+                                                {{ $employee->id_empleado }}
+                                            </a>
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                             {{ $employee->nombre }} {{ $employee->apellido_1 }} {{ $employee->apellido_2 }}
                                             @if(!empty($previousEmployeeIds) && !in_array($employee->id_empleado, $previousEmployeeIds))
@@ -199,7 +203,11 @@
                             <tbody class="divide-y divide-gray-100 dark:divide-[#1b1b1b]">
                                 @foreach($leavesDetails as $leave)
                                     <tr>
-                                        <td class="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-200">{{ $leave['id_empleado'] }}</td>
+                                        <td class="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                            <a href="{{ route('employees.search', ['id_empleado' => $leave['id_empleado']]) }}" class="text-blue-600 hover:underline cursor-pointer" title="Ver historial de este empleado">
+                                                {{ $leave['id_empleado'] }}
+                                            </a>
+                                        </td>
                                         <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ $leave['nombre'] }}</td>
                                         <td class="px-4 py-3">
                                             @if($leave['status'] == 'baja_total')
