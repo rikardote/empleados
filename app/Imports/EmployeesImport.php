@@ -28,6 +28,7 @@ class EmployeesImport implements ToCollection, WithHeadingRow, WithEvents, WithC
 {
     private string|null $periodo;
     private string|null $importId;
+    private string|null $sourceFile;
     private int $processedRows = 0;
 
     // Columnas que van directamente a la tabla `employees`
@@ -95,10 +96,11 @@ class EmployeesImport implements ToCollection, WithHeadingRow, WithEvents, WithC
         'fecha_ingreso_st', 'fec_alta_empleado', 'fec_imputacion', 'fec_pago',
     ];
 
-    public function __construct(?string $periodo = null, ?string $importId = null)
+    public function __construct(?string $periodo = null, ?string $importId = null, ?string $sourceFile = null)
     {
         $this->periodo = $periodo;
         $this->importId = $importId;
+        $this->sourceFile = $sourceFile;
     }
 
     public function registerEvents(): array
@@ -145,7 +147,10 @@ class EmployeesImport implements ToCollection, WithHeadingRow, WithEvents, WithC
             $row = $row->toArray();
 
             // ── Columnas principales ───────────────────────────────────────
-            $record = ['periodo' => $this->periodo];
+            $record = [
+                'periodo' => $this->periodo,
+                'source_file' => $this->sourceFile
+            ];
 
             foreach (self::MAIN_COLUMNS as $col) {
                 if ($col === 'periodo') continue; // ya asignado arriba
@@ -208,9 +213,9 @@ class EmployeesImport implements ToCollection, WithHeadingRow, WithEvents, WithC
 
         if (is_numeric($value)) {
             try {
-                // fromExcelDate() devuelve un timestamp PHP directamente
-                $timestamp = Date::excelToTimestamp((float) $value);
-                return date('Y-m-d', $timestamp);
+                // excelToDateTimeObject es más seguro que excelToTimestamp porque evita
+                // desplazamientos por zona horaria al formatear.
+                return Date::excelToDateTimeObject((float) $value)->format('Y-m-d');
             } catch (\Throwable) {
                 return (string) $value;
             }

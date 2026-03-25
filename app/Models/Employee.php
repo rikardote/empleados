@@ -8,6 +8,7 @@ class Employee extends Model
 {
     protected $fillable = [
         'periodo',
+        'source_file',
         'n_empresa',
         'id_tipo_plaza',
         'id_plaza_empleado',

@@ -21,7 +21,7 @@ class EmployeeReportController extends Controller
             'concepto_nuevo_03' => 'SINAPTEISSSTE',
         ];
 
-        $periods = Employee::distinct()->orderByDesc('periodo')->pluck('periodo');
+        $periods = $this->getSortedPeriods();
 
         $selectedConcept = $request->input('concept');
         $selectedPeriod = $request->input('period');
@@ -139,7 +139,7 @@ class EmployeeReportController extends Controller
 
     public function comparePeriods(Request $request)
     {
-        $periods = Employee::distinct()->orderByDesc('periodo')->pluck('periodo');
+        $periods = $this->getSortedPeriods();
 
         if ($periods->count() < 2) {
             return view('employees.compare-periods', [
@@ -203,6 +203,7 @@ class EmployeeReportController extends Controller
             'id_banco',
             'num_cuenta',
             'id_forma_pago',
+            'source_file',
         ];
 
         // Funcion para obtener la data relevante para comparar/deduplicar
@@ -260,7 +261,10 @@ class EmployeeReportController extends Controller
                 
                 $prevValue = $prevEmployee->getAttribute($key);
                 
-                if ($value != $prevValue) {
+                $v1 = is_string($value) ? trim($value) : $value;
+                $v2 = is_string($prevValue) ? trim($prevValue) : $prevValue;
+
+                if ($v1 != $v2 && !($v1 === null && $v2 === '') && !($v1 === '' && $v2 === null)) {
                     $changes[$key] = [
                         'old' => $prevValue,
                         'new' => $value
@@ -327,14 +331,8 @@ class EmployeeReportController extends Controller
     {
         $path = storage_path('app/public/imports/' . $filename);
         if (file_exists($path)) {
-            // Intentar extraer el periodo del nombre del archivo (Formato: PERIODO_TIMESTAMP_ORIGINALNAME)
-            $parts = explode('_', $filename);
-            $period = $parts[0];
-
-            // Eliminar registros de ese periodo si es un periodo válido
-            if ($period && $period !== 'N' && $period !== 'A') {
-                Employee::where('periodo', $period)->delete();
-            }
+            // Eliminar registros que tengan este archivo específico como origen
+            Employee::where('source_file', $filename)->delete();
 
             unlink($path);
         }
@@ -368,25 +366,126 @@ class EmployeeReportController extends Controller
 
     public function import(Request $request)
     {
+        if (!$request->hasFile('file') && $request->isMethod('POST')) {
+            $max = ini_get('upload_max_filesize');
+            return redirect()->back()->with('error', "No se recibió ningún archivo. Es posible que el archivo sea demasiado grande (límite: $max) o el formato sea inválido.");
+        }
+
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv',
-            'periodo' => 'required|string',
+            'file' => 'required|mimes:xlsx,xls,csv,bin',
         ]);
 
         ini_set('memory_limit', '1G');
         
         $file = $request->file('file');
-        $periodo = $request->input('periodo');
-        $importId = uniqid();
         
-        // Guardar el archivo
-        $fileName = $periodo . '_' . now()->format('YmdHis') . '_' . $file->getClientOriginalName();
-        $file->storeAs('imports', $fileName, 'public');
+        try {
+            // Leer solo las primeras 2 filas para detectar el periodo automáticamente
+            $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file->getRealPath());
+            $reader->setReadDataOnly(true);
+            $reader->setReadFilter(new class implements \PhpOffice\PhpSpreadsheet\Reader\IReadFilter {
+                public function readCell($columnAddress, $row, $worksheetName = '') {
+                    return $row <= 2;
+                }
+            });
 
-        // Importar
-        Excel::import(new EmployeesImport($periodo, $importId), $file);
+            $spreadsheet = $reader->load($file->getRealPath());
+            $worksheet = $spreadsheet->getActiveSheet();
+            $headers = [];
+            $firstDataRow = [];
+            
+            foreach ($worksheet->getRowIterator(1, 1) as $row) {
+                foreach ($row->getCellIterator() as $cell) {
+                    $val = $cell->getValue();
+                    if ($val === null || $val === '') continue;
+                    $headers[] = strtolower(trim($val));
+                }
+            }
+            
+            foreach ($worksheet->getRowIterator(2, 2) as $row) {
+                foreach ($row->getCellIterator() as $cell) {
+                    $firstDataRow[] = $cell->getValue();
+                }
+            }
+            
+            // Asegurarnos de que coincidan las longitudes para array_combine
+            $dataCount = count($firstDataRow);
+            $headerCount = count($headers);
+            if ($dataCount > $headerCount) {
+                $firstDataRow = array_slice($firstDataRow, 0, $headerCount);
+            } elseif ($dataCount < $headerCount) {
+                $headers = array_slice($headers, 0, $dataCount);
+            }
+            
+            $data = array_combine($headers, $firstDataRow);
+            
+            if (!isset($data['fec_pago'])) {
+                return redirect()->back()->with('error', 'No se pudo encontrar la columna "fec_pago" en la primera fila de datos. Verifica el encabezado del archivo.');
+            }
 
-        return redirect()->route('employees.import-form')->with('success', 'Archivo importado correctamente.');
+            $fecPagoRaw = $data['fec_pago'];
+            if (is_numeric($fecPagoRaw)) {
+                $dateObj = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($fecPagoRaw);
+            } else {
+                $dateObj = \Carbon\Carbon::parse($fecPagoRaw);
+            }
+
+            $month = (int) $dateObj->format('m');
+            $day = (int) $dateObj->format('d');
+            $year = $dateObj->format('Y');
+
+            $qq = ($month * 2) - ($day <= 15 ? 1 : 0);
+            $periodo = str_pad($qq, 2, '0', STR_PAD_LEFT) . '-' . $year;
+
+            // Validar que no exista ya esa plantilla (periodo) o su versión alternativa (AAAA-QQ)
+            $parts = explode('-', $periodo);
+            $alternatePeriodo = $parts[1] . '-' . $parts[0];
+            
+            $exists = Employee::whereIn('periodo', [$periodo, $alternatePeriodo])->exists();
+            if ($exists) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', "Ya existen registros para el periodo $periodo (detectado de 'fec_pago'). Debes eliminar la importación previa si deseas re-subirla.");
+            }
+
+            $importId = uniqid();
+            $fileName = $periodo . '_' . now()->format('YmdHis') . '_' . $file->getClientOriginalName();
+            $file->storeAs('imports', $fileName, 'public');
+
+            Excel::import(new EmployeesImport($periodo, $importId, $fileName), $file);
+
+            return redirect()->route('employees.import-form')->with('success', "Archivo detectado como periodo $periodo e importado correctamente.");
+
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Error en importación: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al procesar el archivo: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Obtiene los periodos únicos ordenados cronológicamente descendente,
+     * manejando ambos formatos: QQ-AAAA y AAAA-QQ.
+     */
+    private function getSortedPeriods()
+    {
+        return Employee::distinct()
+            ->pluck('periodo')
+            ->map(function ($p) {
+                if (empty($p)) return null;
+                $parts = explode('-', $p);
+                if (count($parts) !== 2) return ['original' => $p, 'normalized' => $p];
+                
+                // Normalizar a AAAA-QQ para ordenación alfabética correcta
+                $normalized = (strlen($parts[0]) === 4) ? $p : $parts[1] . '-' . $parts[0];
+                return [
+                    'original' => $p,
+                    'normalized' => $normalized
+                ];
+            })
+            ->filter()
+            ->sortByDesc('normalized')
+            ->pluck('original')
+            ->values();
     }
 
     public function search(Request $request)

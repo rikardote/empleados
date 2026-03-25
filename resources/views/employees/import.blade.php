@@ -18,17 +18,33 @@
 
         <div class="max-w-2xl mx-auto">
             <h1 class="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Importar Quincena</h1>
+            
+            @if(session('success'))
+                <div class="mb-6 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <div class="bg-white dark:bg-[#161615] rounded-xl shadow-sm p-8 border border-gray-200 dark:border-[#3E3E3A]">
                 <form action="{{ route('employees.import') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
                     
-                    <div>
-                        <label for="periodo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Periodo (Quincena)</label>
-                        <input type="text" name="periodo" id="periodo" placeholder="Ej. 2024-05" required
-                            class="w-full rounded-md border-gray-300 dark:border-[#3E3E3A] dark:bg-[#0a0a0a] dark:text-white focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3 bg-white">
-                        <p class="mt-2 text-xs text-gray-500 italic">Formato recomendado: AAAA-QQ (ej. 2024-01)</p>
-                    </div>
 
                     <div>
                         <label for="file" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Archivo Excel / CSV</label>
@@ -100,14 +116,43 @@
     <script>
         const fileInput = document.getElementById('file');
         const fileLabel = document.getElementById('file-label');
+        const dropZone = document.getElementById('drop-zone');
         
-        fileInput.onchange = function() {
-            if (this.files[0]) {
-                fileLabel.textContent = this.files[0].name;
+        // Función para actualizar el label
+        function updateFileLabel(file) {
+            if (file) {
+                fileLabel.textContent = file.name;
                 fileLabel.classList.remove('text-blue-600');
                 fileLabel.classList.add('text-green-600', 'font-bold');
             }
+        }
+
+        fileInput.onchange = function() {
+            if (this.files[0]) {
+                updateFileLabel(this.files[0]);
+            }
         };
+
+        // Drag & Drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/10');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/10');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/10');
+            
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                fileInput.files = files; // Asignar archivos al input
+                updateFileLabel(files[0]);
+            }
+        });
     </script>
 </body>
 </html>
