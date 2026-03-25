@@ -101,6 +101,21 @@
                                                     ];
 
                                                     $categorized = $employee->getCategorizedNomina();
+                                                    $conceptMapping = App\Constants\PayrollMapping::getMapping();
+
+                                                    // Sort perceptions by code (01, 02, 03... 0A, 10...)
+                                                    uksort($categorized['perceptions'], function($a, $b) use ($conceptMapping) {
+                                                        $codeA = $conceptMapping[$a]['code'] ?? 'ZZ';
+                                                        $codeB = $conceptMapping[$b]['code'] ?? 'ZZ';
+                                                        return strnatcmp($codeA, $codeB);
+                                                    });
+
+                                                    // Sort deductions by code
+                                                    uksort($categorized['deductions'], function($a, $b) use ($conceptMapping) {
+                                                        $codeA = $conceptMapping[$a]['code'] ?? 'ZZ';
+                                                        $codeB = $conceptMapping[$b]['code'] ?? 'ZZ';
+                                                        return strnatcmp($codeA, $codeB);
+                                                    });
                                                 @endphp
 
                                                 @foreach($groups as $groupName => $fields)
@@ -114,61 +129,87 @@
                                                                     <div>
                                                                         <p class="text-xs text-gray-500 mb-0.5">{{ strtoupper(str_replace('_', ' ', $field)) }}</p>
                                                                         <p class="text-sm font-medium text-gray-900 dark:text-gray-200">
-                                                                            {{ $attributes[$field] ?: '---' }}
+                                                                            @if(($field === 'id_centro_pago' || $field === 'id_centro_trabajo') && !empty($attributes[$field]))
+                                                                                {{ str_pad($attributes[$field], 5, '0', STR_PAD_LEFT) }}
+                                                                            @else
+                                                                                {{ $attributes[$field] ?: '---' }}
+                                                                            @endif
                                                                         </p>
                                                                     </div>
                                                                 @endif
                                                             @endforeach
                                                         </div>
                                                     </div>
-                                                @endforeach
-
-                                                <!-- Nomina Data -->
-                                                <div class="col-span-full mt-10 bg-gray-50 dark:bg-[#0a0a0a] rounded-2xl p-8 border border-gray-200 dark:border-[#3E3E3A]">
-                                                    <!-- Percepciones -->
-                                                    <div class="mb-10">
-                                                        <h4 class="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-widest mb-6 flex items-center">
-                                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 10l7-7m0 0l7 7m-7-7v18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                                            Percepciones
-                                                        </h4>
-                                                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                                                            @foreach($categorized['perceptions'] as $key => $val)
-                                                                <div class="p-4 bg-white dark:bg-[#161615] rounded-xl shadow-sm border border-gray-100 dark:border-[#3E3E3A] hover:border-green-200 transition-colors">
-                                                                    <p class="text-[10px] text-gray-400 uppercase font-bold truncate mb-1" title="{{ $key }}">{{ $key }}</p>
-                                                                    <p class="text-lg font-black text-green-600 dark:text-green-400">
-                                                                        ${{ number_format((float)$val, 2) }}
-                                                                    </p>
-                                                                </div>
-                                                            @endforeach
-                                                        </div>
-                                                        <div class="mt-4 flex justify-end">
-                                                            <div class="bg-green-50 dark:bg-green-900/20 px-4 py-2 rounded-lg border border-green-100 dark:border-green-900/30">
-                                                                <span class="text-xs font-bold text-green-700 dark:text-green-300 uppercase">Subtotal Percepciones:</span>
-                                                                <span class="text-lg font-black text-green-600 dark:text-green-400 ml-2">${{ number_format($categorized['total_devengos'], 2) }}</span>
+                                                @endforeach                                                <!-- Nomina Data side-by-side -->
+                                                <div class="col-span-full mt-10">
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 border border-gray-200 dark:border-[#3E3E3A] rounded-xl overflow-hidden bg-white dark:bg-[#161615]">
+                                                        <!-- Left Column: Perceptions -->
+                                                        <div class="border-r border-gray-200 dark:border-[#3E3E3A]">
+                                                            <div class="bg-green-50/50 dark:bg-green-900/10 px-4 py-2 border-b border-gray-200 dark:border-[#3E3E3A]">
+                                                                <h4 class="text-[10px] font-bold text-green-700 dark:text-green-400 uppercase tracking-widest flex items-center">
+                                                                    <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 10l7-7m0 0l7 7m-7-7v18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                                    Percepciones
+                                                                </h4>
+                                                            </div>
+                                                            <div class="divide-y divide-gray-100 dark:divide-[#3E3E3A]">
+                                                                @foreach($categorized['perceptions'] as $key => $val)
+                                                                    @php
+                                                                        $mapping = $conceptMapping[$key] ?? ['code' => '?', 'name' => $key];
+                                                                    @endphp
+                                                                    <div class="px-4 py-2 flex justify-between items-start hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                                                                        <div class="flex-1 min-w-0 pr-2">
+                                                                            <p class="text-[11px] font-bold text-gray-800 dark:text-gray-200 truncate" title="{{ $mapping['code'] }} - {{ $mapping['name'] }}">
+                                                                                {{ $mapping['code'] }} - {{ $mapping['name'] }}
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="text-right whitespace-nowrap">
+                                                                            <p class="text-[11px] font-black text-green-600 dark:text-green-400">
+                                                                                ${{ number_format((float)$val, 2) }}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+                                                                @if(count($categorized['perceptions']) > 0)
+                                                                    <div class="px-4 py-3 bg-green-50/30 dark:bg-green-900/5 flex justify-between items-center border-t border-green-100 dark:border-green-900/20">
+                                                                        <span class="text-[10px] font-black text-green-700 dark:text-green-300 uppercase">Subtotal</span>
+                                                                        <span class="text-xs font-black text-green-600 dark:text-green-400">${{ number_format($categorized['total_devengos'], 2) }}</span>
+                                                                    </div>
+                                                                @endif
                                                             </div>
                                                         </div>
-                                                    </div>
 
-                                                    <!-- Deducciones -->
-                                                    <div class="mb-4">
-                                                        <h4 class="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-widest mb-6 flex items-center">
-                                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 14l-7 7m0 0l-7-7m7 7V3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                                            Deducciones
-                                                        </h4>
-                                                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                                                            @foreach($categorized['deductions'] as $key => $val)
-                                                                <div class="p-4 bg-white dark:bg-[#161615] rounded-xl shadow-sm border border-gray-100 dark:border-[#3E3E3A] hover:border-red-200 transition-colors">
-                                                                    <p class="text-[10px] text-gray-400 uppercase font-bold truncate mb-1" title="{{ $key }}">{{ $key }}</p>
-                                                                    <p class="text-lg font-black text-red-600 dark:text-red-400">
-                                                                        ${{ number_format((float)$val, 2) }}
-                                                                    </p>
-                                                                </div>
-                                                            @endforeach
-                                                        </div>
-                                                        <div class="mt-4 flex justify-end">
-                                                            <div class="bg-red-50 dark:bg-red-900/20 px-4 py-2 rounded-lg border border-red-100 dark:border-red-900/30">
-                                                                <span class="text-xs font-bold text-red-700 dark:text-red-300 uppercase">Total Retenido:</span>
-                                                                <span class="text-lg font-black text-red-600 dark:text-red-400 ml-2">${{ number_format($categorized['total_retenido_a'], 2) }}</span>
+                                                        <!-- Right Column: Deductions -->
+                                                        <div class="bg-gray-50/30 dark:bg-black/10">
+                                                            <div class="bg-red-50/50 dark:bg-red-900/10 px-4 py-2 border-b border-gray-200 dark:border-[#3E3E3A]">
+                                                                <h4 class="text-[10px] font-bold text-red-700 dark:text-red-400 uppercase tracking-widest flex items-center">
+                                                                    <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 14l-7 7m0 0l-7-7m7 7V3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                                    Deducciones
+                                                                </h4>
+                                                            </div>
+                                                            <div class="divide-y divide-gray-100 dark:divide-[#3E3E3A]">
+                                                                @foreach($categorized['deductions'] as $key => $val)
+                                                                    @php
+                                                                        $mapping = $conceptMapping[$key] ?? ['code' => '?', 'name' => $key];
+                                                                    @endphp
+                                                                    <div class="px-4 py-2 flex justify-between items-start hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                                                                        <div class="flex-1 min-w-0 pr-2">
+                                                                            <p class="text-[11px] font-bold text-gray-800 dark:text-gray-200 truncate" title="{{ $mapping['code'] }} - {{ $mapping['name'] }}">
+                                                                                {{ $mapping['code'] }} - {{ $mapping['name'] }}
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="text-right whitespace-nowrap">
+                                                                            <p class="text-[11px] font-black text-red-600 dark:text-red-400">
+                                                                                ${{ number_format((float)$val, 2) }}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+                                                                @if(count($categorized['deductions']) > 0)
+                                                                    <div class="px-4 py-3 bg-red-50/30 dark:bg-red-900/5 flex justify-between items-center border-t border-red-100 dark:border-red-900/20">
+                                                                        <span class="text-[10px] font-black text-red-700 dark:text-red-300 uppercase">Total Retenido</span>
+                                                                        <span class="text-xs font-black text-red-600 dark:text-red-400">${{ number_format($categorized['total_retenido_a'], 2) }}</span>
+                                                                    </div>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                     </div>
@@ -176,7 +217,7 @@
                                                     <!-- Total Neto -->
                                                     <div class="mt-12 flex justify-center">
                                                         <div class="bg-blue-600 text-white px-10 py-6 rounded-3xl shadow-2xl transform hover:scale-105 transition-transform">
-                                                            <p class="text-xs uppercase font-bold tracking-widest opacity-80 mb-1 text-center">Líquido a Pagar</p>
+                                                            <p class="text-xs uppercase font-bold tracking-widest opacity-80 mb-1 text-center">Neto a Pagar</p>
                                                             <p class="text-5xl font-black text-center">${{ number_format($categorized['liquido'], 2) }}</p>
                                                         </div>
                                                     </div>
